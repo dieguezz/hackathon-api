@@ -19,6 +19,11 @@ type Event struct {
 	URL         string    `json:"url"`
 }
 
+// Response formats for AMP expected response
+type Response struct {
+	Items []Event `json:"items"`
+}
+
 func main() {
 
 	jsonFile, err := os.Open("all_hackathons.json")
@@ -31,11 +36,13 @@ func main() {
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	var result []Event
-	json.Unmarshal([]byte(byteValue), &result)
+	var result Response
+	json.Unmarshal([]byte(byteValue), &result.Items)
 	log.Println("hola ke ase")
 	r := gin.Default()
+
 	r.GET("/all", func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.JSON(200, result)
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
